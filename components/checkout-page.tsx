@@ -107,7 +107,7 @@ export function CheckoutPage({
   }
 
   if (!items.length && !result) {
-    return <div className="empty-cart"><h1>Chưa có sản phẩm để thanh toán</h1><p>Hãy chọn ít nhất một bó hoa trước khi tiếp tục.</p><Link className="button button-primary" href="/hoa">Chọn hoa</Link></div>;
+    return <div className="empty-checkout"><h1>Chưa có sản phẩm để thanh toán</h1><p>Hãy chọn ít nhất một bó hoa trước khi tiếp tục.</p><Link className="button button-primary" href="/hoa">Chọn hoa</Link></div>;
   }
 
   if (result) {

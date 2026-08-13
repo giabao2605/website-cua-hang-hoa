@@ -11,8 +11,8 @@ export function ProductCard({ product }: { product: Product }) {
       <Link className="product-image" href={`/hoa/${product.slug}`}>
         <Image src={product.image} alt={`${product.name} - ${product.subtitle}`} fill sizes="(max-width: 700px) 90vw, (max-width: 1100px) 45vw, 25vw" />
         {product.badge && <span className="product-badge">{product.badge}</span>}
-        <button className="wishlist-button" type="button" aria-label={`Lưu ${product.name}`}><Heart size={18} /></button>
       </Link>
+      <button className="wishlist-button" type="button" aria-label={`Lưu ${product.name}`}><Heart size={18} /></button>
       <div className="product-info">
         <div><Link href={`/hoa/${product.slug}`}><h3>{product.name}</h3></Link><p>{product.subtitle}</p></div>
         <div className="product-buy"><span>{formatVnd(product.price)}{product.compareAtPrice && <del>{formatVnd(product.compareAtPrice)}</del>}</span><AddToCart product={product} compact /></div>

@@ -1,5 +1,23 @@
 import { expect, test } from "@playwright/test";
 
+test("empty cart invites customers back to three featured designs", async ({ page }) => {
+  await page.goto("/gio-hang");
+
+  await expect(page.getByRole("heading", { name: "Giỏ hoa đang chờ bạn chọn" })).toBeVisible();
+  await expect(page.getByText("TF", { exact: true })).toHaveCount(0);
+  const recommendations = page.locator(".empty-cart-recommendations .product-card");
+  await expect(recommendations).toHaveCount(3);
+  await expect(recommendations.first()).toBeVisible();
+  await expect(recommendations.last()).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.getByRole("link", { name: "Chọn hoa ngay" }).click();
+  await expect(page).toHaveURL(/\/hoa$/);
+
+  await page.goto("/thanh-toan");
+  await expect(page.locator(".empty-checkout")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Chưa có sản phẩm để thanh toán" })).toBeVisible();
+});
+
 test("customer can browse, report a MoMo payment, and track a real order", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Để hoa nói hộ/ })).toBeVisible();
