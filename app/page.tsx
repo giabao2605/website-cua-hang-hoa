@@ -1,0 +1,57 @@
+import Image from "next/image";
+import Link from "@/components/safe-link";
+import { ArrowRight, BadgeCheck, CalendarHeart, Flower2, HeartHandshake, PackageCheck, Quote, Truck } from "lucide-react";
+import { ProductCard } from "../components/product-card";
+import { JournalCard } from "../components/journal-card";
+import { getCatalogProducts } from "../lib/catalog-store";
+import { journalArticles } from "../lib/journal";
+
+export default async function Home() {
+  const products = await getCatalogProducts();
+  const featured = products.filter((product) => product.featured);
+  return (
+    <>
+      <section className="hero">
+        <Image className="hero-image" src="/brand/hero-bouquet.jpg" alt="Bó hoa cẩm tú cầu xanh và hồng garden của Trâm Florist" fill priority sizes="100vw" />
+        <div className="hero-overlay" />
+        <div className="container hero-content">
+          <span className="eyebrow eyebrow-light">Bộ sưu tập hoa theo mùa</span>
+          <h1>Để hoa nói hộ<br /><em>những điều dịu dàng.</em></h1>
+          <p>Những bó hoa tươi được tuyển chọn theo mùa, kết thủ công và giao trọn vẹn cảm xúc đến người bạn thương.</p>
+          <div className="hero-actions"><Link className="button button-gold" href="/hoa">Chọn hoa ngay <ArrowRight size={17} /></Link><Link className="text-link-light" href="/gioi-thieu">Câu chuyện của Trâm</Link></div>
+          <div className="hero-proof"><span><BadgeCheck />Hoa tươi tuyển chọn mỗi ngày</span><span><Truck />Giao hoa toàn quốc</span></div>
+        </div>
+        <div className="hero-scroll">Cuộn để khám phá <span /></div>
+      </section>
+
+      <section className="trust-strip"><div className="container trust-grid"><div><Flower2 /><span><strong>Hoa tươi theo mùa</strong><small>Linh hoạt thay hoa tương đương</small></span></div><div><HeartHandshake /><span><strong>Kết hoa thủ công</strong><small>Chăm chút từng chi tiết</small></span></div><div><PackageCheck /><span><strong>Đóng gói an toàn</strong><small>Bảo vệ hoa trên hành trình</small></span></div><div><CalendarHeart /><span><strong>Hỗ trợ 7 ngày</strong><small>08:00 - 17:00 mỗi ngày</small></span></div></div></section>
+
+      <section className="section collection-section">
+        <div className="container">
+          <div className="section-heading split-heading"><div><span className="eyebrow">Được yêu thích</span><h2>Những thiết kế đang vào mùa</h2></div><Link className="text-link" href="/hoa">Xem tất cả <ArrowRight size={16} /></Link></div>
+          <div className="product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} />)}</div>
+        </div>
+      </section>
+
+      <section className="occasion-section section">
+        <div className="container">
+          <div className="section-heading centered"><span className="eyebrow">Hoa cho mọi khoảnh khắc</span><h2>Bạn muốn gửi một lời gì?</h2><p>Chọn theo dịp, Trâm sẽ giúp bạn gửi đúng cảm xúc.</p></div>
+          <div className="occasion-grid">
+            {[
+              ["Sinh nhật", "Một tuổi mới thật rạng rỡ", products[1].image],
+              ["Kỷ niệm", "Giữ lại những ngày đáng nhớ", products[0].image],
+              ["Chúc mừng", "Cho một cột mốc mới", products[7].image],
+              ["Tặng người thương", "Nói lời yêu theo cách dịu dàng", products[6].image],
+            ].map(([title, subtitle, image]) => <Link key={title} className="occasion-card" href={`/hoa?q=${encodeURIComponent(title)}`}><Image src={image} alt="" fill sizes="25vw" /><span><small>{subtitle}</small><strong>{title}</strong><i><ArrowRight size={17} /></i></span></Link>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="story-feature section"><div className="container story-grid"><div className="story-photos"><Image className="story-main" src="/products/pastel-poetry.png" alt="Bó hoa pastel được kết thủ công" width={900} height={1100} /><Image className="story-small" src="/products/morning-mist.png" alt="Hoa cẩm tú cầu theo mùa" width={500} height={620} /><span className="round-seal">Trâm Florist · Tuy An Bắc ·</span></div><div className="story-copy"><span className="eyebrow">Câu chuyện của Trâm</span><h2>Mỗi mùa hoa,<br />một cách yêu.</h2><p>Trâm Florist bắt đầu từ niềm tin rằng một bó hoa đẹp không cần rập khuôn. Chúng tôi chọn những cành đang vào mùa đẹp nhất, kết bằng tay và giữ lại vẻ tự nhiên vốn có.</p><p>Mỗi thiết kế có thể thay đổi nhẹ theo mùa, nhưng bảng màu, cảm xúc và giá trị bạn chọn sẽ luôn được giữ trọn.</p><Link className="button button-outline" href="/gioi-thieu">Khám phá câu chuyện <ArrowRight size={16} /></Link><div className="signature">Trâm</div></div></div></section>
+
+      <section className="quote-section"><div className="container"><Quote /><blockquote>“Hoa không chỉ là món quà. Đó là cách ta dừng lại một chút, nhớ về nhau và giữ một khoảnh khắc thật lâu.”</blockquote><span>Trâm Florist</span></div></section>
+
+      <section className="section journal-section"><div className="container"><div className="section-heading split-heading"><div><span className="eyebrow">Nhật ký mùa hoa</span><h2>Chăm hoa và chọn hoa cùng Trâm</h2></div><Link className="text-link" href="/nhat-ky">Xem thêm <ArrowRight size={16} /></Link></div><div className="journal-grid">{journalArticles.map((article) => <JournalCard key={article.slug} article={article} />)}</div></div></section>
+    </>
+  );
+}

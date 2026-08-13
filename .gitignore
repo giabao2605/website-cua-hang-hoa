@@ -1,0 +1,55 @@
+# Dependencies
+/node_modules/
+/.pnp/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Environment and local credentials
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+*.pem
+
+# Build output and caches
+/.next/
+/.vinext/
+/dist/
+/out/
+*.tsbuildinfo
+
+# Cloudflare local state
+/.wrangler/
+
+# Tests and coverage
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+
+# Local work and generated artifacts
+/outputs/
+/work/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Hosting providers
+/.vercel/
+
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo

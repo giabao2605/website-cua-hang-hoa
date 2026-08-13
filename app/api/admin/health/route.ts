@@ -1,0 +1,2 @@
+import { requireAdmin } from "../../../../lib/admin";
+export async function GET() { const admin = await requireAdmin(); if (!admin.ok) return Response.json({ error: { code: admin.reason, message: admin.reason === "unauthenticated" ? "Chưa đăng nhập." : admin.reason === "unverified" ? "Email chưa được xác nhận." : "Không có quyền quản trị." } }, { status: admin.reason === "unauthenticated" ? 401 : 403 }); return Response.json({ data: { status: "ok" } }); }
