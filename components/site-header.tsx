@@ -10,7 +10,7 @@ import { CartLink } from "./cart-link";
 const nav = [
   ["Trang chủ", "/"],
   ["Hoa theo mùa", "/hoa"],
-  ["Dịp tặng", "/hoa?sort=featured"],
+  ["Dịp tặng", "/dip-tang"],
   ["Câu chuyện", "/gioi-thieu"],
   ["Giao hoa", "/chinh-sach-giao-hang"],
   ["Liên hệ", "/lien-he"],

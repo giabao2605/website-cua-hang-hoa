@@ -18,7 +18,7 @@ export function SiteFooter({ settings = defaultSiteSettings }: { settings?: Site
           <div className="footer-contact"><MapPin size={17} /><span>{settings.address}</span></div>
           <div className="footer-contact"><Clock3 size={17} /><span>{settings.openingHours}</span></div>
         </div>
-        <div><h3>Khám phá</h3><Link href="/hoa">Tất cả hoa</Link><Link href="/hoa?category=Bó+hoa">Bó hoa theo mùa</Link><Link href="/hoa?category=Giỏ+hoa">Giỏ hoa</Link><Link href="/nhat-ky">Nhật ký mùa hoa</Link><Link href="/gioi-thieu">Câu chuyện Trâm</Link></div>
+        <div><h3>Khám phá</h3><Link href="/hoa">Hoa theo mùa</Link><Link href="/dip-tang">Chọn theo dịp tặng</Link><Link href="/hoa?category=Bó+hoa">Bó hoa theo mùa</Link><Link href="/hoa?category=Giỏ+hoa">Giỏ hoa</Link><Link href="/nhat-ky">Nhật ký mùa hoa</Link><Link href="/gioi-thieu">Câu chuyện Trâm</Link></div>
         <div><h3>Hỗ trợ</h3><Link href="/tra-cuu-don">Tra cứu đơn hàng</Link><Link href="/chinh-sach-giao-hang">Giao hoa toàn quốc</Link><Link href="/lien-he">Liên hệ tư vấn</Link><Link href="/tai-khoan">Tài khoản của tôi</Link></div>
         <div className="footer-newsletter"><h3>Thư hoa theo mùa</h3><p>Nhận thông tin bộ sưu tập mới và mẹo giữ hoa tươi lâu.</p><NewsletterForm /></div>
       </div>

@@ -11,7 +11,7 @@ export default defineConfig({
     screenshot: "off",
   },
   webServer: {
-    command: "npx vite preview --host 127.0.0.1 --port 3100 --strictPort",
+    command: "node tests/e2e/start-preview.mjs",
     url: "http://127.0.0.1:3100",
     reuseExistingServer: false,
     timeout: 120_000,

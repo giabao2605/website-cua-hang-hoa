@@ -12,21 +12,21 @@ import {
 
 test("admin product validation preserves valid integer VND and stock", () => {
   const source = {
-    id: "amour-bleu",
+    id: "vuon-trong-nang",
     sku: "TF-BQ-001",
-    slug: "amour-bleu",
-    name: "Tình Xanh",
-    subtitle: "Cẩm tú cầu xanh",
-    description: "Một thiết kế hoa xanh thanh lịch và được kết thủ công.",
+    slug: "vuon-trong-nang",
+    name: "Vườn Trong Nắng",
+    subtitle: "Hồng và hoa đồng nội đa sắc",
+    description: "Bó hoa tròn đa sắc trong giấy kraft, rực rỡ nhưng vẫn mềm mại và được kết thủ công.",
     category: "Bó hoa",
     seasonal: "Quanh năm",
-    image: "/products/amour-bleu.jpg",
-    gallery: ["/products/amour-bleu.jpg"],
+    image: "/products/vuon-trong-nang.webp",
+    gallery: ["/products/vuon-trong-nang.webp"],
     occasions: ["Sinh nhật", "Sinh nhật", " Kỷ niệm "],
-    flowers: ["Cẩm tú cầu"],
-    palette: "Xanh - hồng",
-    price: 890_000,
-    compareAtPrice: 990_000,
+    flowers: ["Hồng", "Hoa đồng nội"],
+    palette: "Vàng - cam - hồng",
+    price: 690_000,
+    compareAtPrice: 790_000,
     stock: 12,
     active: true,
     featured: true,
@@ -35,7 +35,7 @@ test("admin product validation preserves valid integer VND and stock", () => {
 
   const parsed = parseAdminProductInput(source);
 
-  assert.equal(parsed.price, 890_000);
+  assert.equal(parsed.price, 690_000);
   assert.equal(parsed.stock, 12);
   assert.deepEqual(parsed.occasions, ["Sinh nhật", "Kỷ niệm"]);
   assert.deepEqual(source.occasions, ["Sinh nhật", "Sinh nhật", " Kỷ niệm "]);

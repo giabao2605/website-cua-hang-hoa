@@ -52,16 +52,16 @@ export default async function Home() {
           <div className="section-heading centered"><span className="eyebrow">Hoa cho mọi khoảnh khắc</span><h2>Bạn muốn gửi một lời gì?</h2><p>Chọn theo dịp, Trâm sẽ giúp bạn gửi đúng cảm xúc.</p></div>
           <div className="occasion-grid">
             {[
-              ["Sinh nhật", "Thêm hoa cho một tuổi mới", products[1].image],
-              ["Kỷ niệm", "Nhắc nhau về một ngày đáng nhớ", products[0].image],
-              ["Chúc mừng", "Mừng một cột mốc mới", products[7].image],
-              ["Tặng người thương", "Một bó hoa thay lời muốn nói", products[6].image],
-            ].map(([title, subtitle, image], index) => <Link key={title} className="occasion-card" href={`/hoa?q=${encodeURIComponent(title)}`}><Image src={image} alt="" fill sizes="(max-width: 760px) 92vw, 50vw" /><b aria-hidden="true">{String(index + 1).padStart(2, "0")}</b><span><small>{subtitle}</small><strong>{title}</strong><i><ArrowRight size={17} /></i></span></Link>)}
+              ["Sinh nhật", "Thêm hoa cho một tuổi mới", "/products/nang-goi-niem-vui.webp"],
+              ["Kỷ niệm", "Nhắc nhau về một ngày đáng nhớ", "/products/sanh-doi-hong-lam.webp"],
+              ["Chúc mừng", "Mừng một cột mốc mới", "/products/sac-mau-le-hoi.webp"],
+              ["Tặng người thương", "Một bó hoa thay lời muốn nói", "/products/hen-nhau-mua-hong.webp"],
+            ].map(([title, subtitle, image], index) => <Link key={title} className="occasion-card" href={`/dip-tang?occasion=${encodeURIComponent(title)}#goi-y`}><Image src={image} alt="" fill sizes="(max-width: 760px) 92vw, 50vw" /><b aria-hidden="true">{String(index + 1).padStart(2, "0")}</b><span><small>{subtitle}</small><strong>{title}</strong><i><ArrowRight size={17} /></i></span></Link>)}
           </div>
         </div>
       </section>
 
-      <section className="story-feature section"><div className="container story-grid"><div className="story-photos"><Image className="story-main" src="/products/pastel-poetry.png" alt="Bó hoa pastel được kết thủ công" width={900} height={1100} /><Image className="story-small" src="/products/morning-mist.png" alt="Hoa cẩm tú cầu theo mùa" width={500} height={620} /><span className="round-seal">Trâm Florist · Tuy An Bắc ·</span><small className="story-caption">Những bó hoa được kết bằng tay</small></div><div className="story-copy"><span className="eyebrow">Câu chuyện của Trâm</span><h2>Mỗi mùa hoa,<br />một cách yêu.</h2><p>Trâm Florist bắt đầu từ niềm tin rằng một bó hoa đẹp không cần rập khuôn. Chúng tôi chọn những cành đang vào mùa đẹp nhất, kết bằng tay và giữ lại vẻ tự nhiên vốn có.</p><p>Mỗi thiết kế có thể thay đổi nhẹ theo mùa, nhưng bảng màu, cảm xúc và giá trị bạn chọn sẽ luôn được giữ trọn.</p><Link className="button button-outline" href="/gioi-thieu">Khám phá câu chuyện <ArrowRight size={16} /></Link><div className="signature">Trâm</div></div></div></section>
+      <section className="story-feature section"><div className="container story-grid"><div className="story-photos"><Image className="story-main" src="/products/dao-choi-trong-vuon.webp" alt="Bó hoa đồng nội Dạo Chơi Trong Vườn được kết thủ công" width={900} height={1100} /><Image className="story-small" src="/products/cham-may.webp" alt="Bó hoa xanh hồng Chạm Mây theo mùa" width={500} height={620} /><span className="round-seal">Trâm Florist · Tuy An Bắc ·</span><small className="story-caption">Những bó hoa được kết bằng tay</small></div><div className="story-copy"><span className="eyebrow">Câu chuyện của Trâm</span><h2>Mỗi mùa hoa,<br />một cách yêu.</h2><p>Trâm Florist bắt đầu từ niềm tin rằng một bó hoa đẹp không cần rập khuôn. Chúng tôi chọn những cành đang vào mùa đẹp nhất, kết bằng tay và giữ lại vẻ tự nhiên vốn có.</p><p>Mỗi thiết kế có thể thay đổi nhẹ theo mùa, nhưng bảng màu, cảm xúc và giá trị bạn chọn sẽ luôn được giữ trọn.</p><Link className="button button-outline" href="/gioi-thieu">Khám phá câu chuyện <ArrowRight size={16} /></Link><div className="signature">Trâm</div></div></div></section>
 
       <section className="quote-section"><div className="container"><span className="quote-kicker">Một lời nhắn từ Trâm</span><Quote /><blockquote>“Hoa không chỉ là món quà. Đó là cách ta dừng lại một chút, nhớ về nhau và giữ một khoảnh khắc thật lâu.”</blockquote><span>Trâm Florist</span></div></section>
 

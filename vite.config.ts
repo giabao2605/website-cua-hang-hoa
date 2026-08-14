@@ -14,6 +14,7 @@ export default defineConfig(async () => {
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
   const { cloudflare } = await import("@cloudflare/vite-plugin");
+  const e2eStatePath = process.env.TRAM_FLORIST_E2E_STATE_PATH?.trim();
 
   return {
     server: isCodexSeatbeltSandbox
@@ -24,6 +25,7 @@ export default defineConfig(async () => {
       sites(),
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+        ...(e2eStatePath ? { persistState: { path: e2eStatePath } } : {}),
       }),
     ],
   };

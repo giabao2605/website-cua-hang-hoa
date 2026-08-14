@@ -20,7 +20,7 @@ test("server-renders Trâm Florist storefront", async () => {
   assert.match(html, /Trâm Florist/);
   assert.match(html, /Để hoa nói hộ/);
   assert.match(html, /Hoa tươi theo mùa/);
-  assert.match(html, /Tình Xanh/);
+  assert.match(html, /Vườn Trong Nắng/);
   assert.match(html, /0838 469 089/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
@@ -54,10 +54,30 @@ test("motion styles preserve the reduced-motion fallback", async () => {
   assert.match(reducedMotion, /opacity:\s*1\s*!important/);
 });
 
-test("server-renders catalog and protected admin boundary", async () => {
-  const catalog = await render("/hoa");
-  assert.equal(catalog.status, 200);
-  assert.match(await catalog.text(), /Tìm bó hoa dành riêng/);
+test("server-renders distinct seasonal and occasion shopping journeys", async () => {
+  const seasonal = await render("/hoa");
+  assert.equal(seasonal.status, 200);
+  const seasonalHtml = await seasonal.text();
+  assert.match(seasonalHtml, /class="[^"]*\bseasonal-page-hero\b/);
+  assert.match(seasonalHtml, /Hoa theo mùa/);
+  assert.doesNotMatch(seasonalHtml, /Bạn đang chọn hoa cho dịp nào/);
+
+  const occasion = await render("/dip-tang");
+  assert.equal(occasion.status, 200);
+  const occasionHtml = await occasion.text();
+  assert.match(occasionHtml, /class="[^"]*\boccasion-page-hero\b/);
+  assert.match(occasionHtml, /Chọn một khoảnh khắc/);
+  assert.match(occasionHtml, /Bạn đang chọn hoa cho dịp nào/);
+  assert.notEqual(occasionHtml, seasonalHtml);
+
+  const birthday = await render("/dip-tang?occasion=Sinh%20nh%E1%BA%ADt");
+  assert.equal(birthday.status, 200);
+  const birthdayHtml = await birthday.text();
+  assert.match(birthdayHtml, /Vườn Trong Nắng/);
+  assert.doesNotMatch(birthdayHtml, /Hẹn Nhau Mùa Hồng/);
+});
+
+test("server-renders the protected admin boundary", async () => {
 
   const admin = await render("/admin");
   assert.equal(admin.status, 200);
@@ -75,8 +95,23 @@ test("serves crawler directives and the product sitemap", async () => {
   assert.equal(sitemap.status, 200);
   const xml = await sitemap.text();
   assert.match(xml, /<urlset/);
-  assert.match(xml, /\/hoa\/amour-bleu/);
-  assert.match(xml, /\/hoa\/ngay-chung-doi/);
+  assert.match(xml, /<loc>[^<]*\/dip-tang<\/loc>/);
+  const productSlugs = [
+    "vuon-trong-nang",
+    "nang-goi-niem-vui",
+    "hen-nhau-mua-hong",
+    "dao-choi-trong-vuon",
+    "chuong-trang-binh-yen",
+    "trang-xanh",
+    "vuon-co-tich",
+    "cham-may",
+    "tu-cau-be-xinh",
+    "sac-mau-le-hoi",
+    "sanh-doi-hong-lam",
+    "may-lam",
+  ];
+  for (const slug of productSlugs) assert.match(xml, new RegExp(`/hoa/${slug}`));
+  assert.doesNotMatch(xml, /\/hoa\/(?:amour-bleu|pastel-poetry|morning-mist|garden-whisper|spring-lullaby|blue-sonata|romance-deep|sunlit-joy|me-oi|ghe-tham|bui-phan|loi-hen-do|nha-co-em|hien-nha-moi|loc-xuan|ngay-chung-doi|sanh-buoc|mo-loi|mot-loi-tien|ban-tiec-chom-thu)(?:<|\/)/);
   assert.match(xml, /\/nhat-ky\/giu-cam-tu-cau-tuoi-lau-ngay-he/);
 });
 

@@ -3,7 +3,8 @@ import { expect, test } from "@playwright/test";
 const routes = [
   "/",
   "/hoa",
-  "/hoa/amour-bleu",
+  "/dip-tang",
+  "/hoa/vuon-trong-nang",
   "/gio-hang",
   "/thanh-toan",
   "/tra-cuu-don",

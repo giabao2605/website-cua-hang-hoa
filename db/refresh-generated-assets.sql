@@ -1,14 +1,10 @@
 UPDATE products
-SET image_url = replace(image_url, '.jpg', '.png'),
-    gallery_json = replace(gallery_json, '.jpg', '.png'),
+SET image_url = replace(replace(replace(image_url, '.jpeg', '.webp'), '.jpg', '.webp'), '.png', '.webp'),
+    gallery_json = replace(replace(replace(gallery_json, '.jpeg', '.webp'), '.jpg', '.webp'), '.png', '.webp'),
     updated_at = CURRENT_TIMESTAMP
-WHERE id IN (
-  'amour-bleu',
-  'pastel-poetry',
-  'morning-mist',
-  'garden-whisper',
-  'spring-lullaby',
-  'blue-sonata',
-  'romance-deep',
-  'sunlit-joy'
-);
+WHERE active = 1
+  AND (
+    image_url LIKE '/products/%.jpeg'
+    OR image_url LIKE '/products/%.jpg'
+    OR image_url LIKE '/products/%.png'
+  );

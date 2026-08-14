@@ -4,7 +4,7 @@ Website bán hoa tươi theo mùa, giao diện tiếng Việt, responsive và c�
 
 ## Tính năng
 
-- Danh mục 20 sản phẩm, tìm kiếm, lọc, chi tiết hoa và giỏ hàng.
+- Danh mục 12 sản phẩm, tìm kiếm, lọc, chi tiết hoa và giỏ hàng.
 - Thanh toán COD hoặc MoMo, tính phí giao ở máy chủ và tra cứu đơn.
 - Đăng ký OTP email, đăng nhập Supabase và trang tài khoản khách hàng.
 - Quản trị sản phẩm, tồn kho, đơn hàng, tài khoản, tuyến giao và cấu hình cửa hàng.

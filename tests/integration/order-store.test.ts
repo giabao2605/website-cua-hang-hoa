@@ -23,7 +23,7 @@ test("order creation fails closed when the durable database is unavailable", asy
     deliverySlot: "08:00-11:00" as const,
     paymentMethod: "COD" as const,
     note: "Chúc mừng",
-    items: [{ productId: "sunlit-joy", quantity: 1 }],
+    items: [{ productId: "vuon-trong-nang", quantity: 1 }],
     idempotencyKey: "5a519722-2177-4c92-a7be-3dddb34688fb",
   };
 

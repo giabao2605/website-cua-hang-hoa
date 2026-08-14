@@ -22,8 +22,8 @@ export const journalArticles: readonly JournalArticle[] = [
     category: "Mẹo chăm hoa",
     title: "5 cách giữ cẩm tú cầu tươi lâu trong ngày hè",
     excerpt: "Cẩm tú cầu uống rất nhiều nước và dễ mất sức khi trời nóng. Năm bước đơn giản dưới đây giúp từng khối hoa giữ được độ căng, màu trong và dáng tự nhiên lâu hơn.",
-    image: "/products/morning-mist.png",
-    imageAlt: "Cẩm tú cầu xanh và cát tường trắng trong bó Sương Mai",
+    image: "/products/tu-cau-be-xinh.webp",
+    imageAlt: "Cẩm tú cầu xanh trong bó Tú Cầu Bé Xinh",
     readTime: "5 phút đọc",
     publishedAt: "2026-08-13",
     sections: [
@@ -67,8 +67,8 @@ export const journalArticles: readonly JournalArticle[] = [
     category: "Chọn hoa",
     title: "Chọn bảng màu hoa phù hợp với từng lời nhắn",
     excerpt: "Màu hoa tạo cảm xúc trước cả khi tấm thiệp được mở. Từ dịu dàng, ấm áp đến rực rỡ, mỗi bảng màu có thể giúp lời nhắn của bạn trở nên rõ ràng và tinh tế hơn.",
-    image: "/products/garden-whisper.png",
-    imageAlt: "Bó hồng garden màu hồng và tím Lời Thì Thầm Của Vườn",
+    image: "/products/sac-mau-le-hoi.webp",
+    imageAlt: "Bó hoa đồng nội đa sắc Sắc Màu Lễ Hội",
     readTime: "6 phút đọc",
     publishedAt: "2026-08-10",
     sections: [
@@ -106,8 +106,8 @@ export const journalArticles: readonly JournalArticle[] = [
     category: "Sau cánh cửa tiệm",
     title: "Một buổi sáng kết hoa theo mùa tại Trâm Florist",
     excerpt: "Trước khi một bó hoa rời Tuy An Bắc, mỗi cành đều đi qua nhiều bước nhỏ: kiểm tra độ tươi, dưỡng nước, phân bảng màu, kết dáng và đóng gói cho đúng hành trình giao.",
-    image: "/products/pastel-poetry.png",
-    imageAlt: "Bó hoa pastel nhiều tầng màu tại Trâm Florist",
+    image: "/products/vuon-trong-nang.webp",
+    imageAlt: "Bó hoa theo mùa Vườn Trong Nắng tại Trâm Florist",
     readTime: "4 phút đọc",
     publishedAt: "2026-08-06",
     sections: [

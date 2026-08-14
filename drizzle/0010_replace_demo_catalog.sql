@@ -1,4 +1,50 @@
-INSERT OR IGNORE INTO products (id, sku, slug, name, subtitle, description, category, seasonal, image_url, gallery_json, occasions_json, flowers_json, palette, badge, active, featured, sort_order)
+CREATE TABLE retired_product_ids (id TEXT PRIMARY KEY);
+INSERT INTO retired_product_ids (id)
+VALUES
+  ('amour-bleu'),
+  ('pastel-poetry'),
+  ('morning-mist'),
+  ('garden-whisper'),
+  ('spring-lullaby'),
+  ('blue-sonata'),
+  ('romance-deep'),
+  ('sunlit-joy'),
+  ('me-oi'),
+  ('ghe-tham'),
+  ('bui-phan'),
+  ('loi-hen-do'),
+  ('nha-co-em'),
+  ('hien-nha-moi'),
+  ('loc-xuan'),
+  ('ngay-chung-doi'),
+  ('sanh-buoc'),
+  ('mo-loi'),
+  ('mot-loi-tien'),
+  ('ban-tiec-chom-thu');
+
+CREATE TABLE retired_demo_order_ids (id TEXT PRIMARY KEY);
+INSERT OR IGNORE INTO retired_demo_order_ids (id)
+SELECT order_id
+FROM order_items
+WHERE product_id IN (SELECT id FROM retired_product_ids);
+
+DELETE FROM payment_evidence
+WHERE order_id IN (SELECT id FROM retired_demo_order_ids);
+DELETE FROM order_events
+WHERE order_id IN (SELECT id FROM retired_demo_order_ids);
+DELETE FROM order_items
+WHERE order_id IN (SELECT id FROM retired_demo_order_ids);
+DELETE FROM orders
+WHERE id IN (SELECT id FROM retired_demo_order_ids);
+DELETE FROM product_variants
+WHERE product_id IN (SELECT id FROM retired_product_ids);
+DELETE FROM products
+WHERE id IN (SELECT id FROM retired_product_ids);
+
+DROP TABLE retired_demo_order_ids;
+DROP TABLE retired_product_ids;
+
+INSERT INTO products (id, sku, slug, name, subtitle, description, category, seasonal, image_url, gallery_json, occasions_json, flowers_json, palette, badge, active, featured, sort_order)
 VALUES
   ('vuon-trong-nang', 'TF-BQ-001', 'vuon-trong-nang', 'Vườn Trong Nắng', 'Sắc hoa ấm áp cho một ngày thật trong trẻo', 'Thiết kế dáng tròn với những mảng màu sáng và lớp lá xanh tự nhiên, mang cảm giác như một khu vườn nhỏ vừa đón nắng đầu ngày.', 'Bó hoa', 'Quanh năm, phối hoa tương đương theo mùa', '/products/vuon-trong-nang.webp', '["/products/vuon-trong-nang.webp"]', '["Sinh nhật","Chúc mừng","Cảm ơn"]', '["Hồng cam","Hồng vàng","Cúc","Hoa đồng nội theo mùa"]', 'Vàng nắng - hồng phấn - xanh lá', 'Mới', 1, 1, 10),
   ('nang-goi-niem-vui', 'TF-BQ-002', 'nang-goi-niem-vui', 'Nắng Gọi Niềm Vui', 'Một khoảng nắng vui được gói trao tận tay', 'Bó hoa có phom mở thoáng, phối sắc vàng tươi cùng các gam sáng dịu để gửi lời chúc tích cực trong sinh nhật hoặc một khởi đầu mới.', 'Bó hoa', 'Quanh năm, phối hoa tương đương theo mùa', '/products/nang-goi-niem-vui.webp', '["/products/nang-goi-niem-vui.webp"]', '["Sinh nhật","Tốt nghiệp","Khởi đầu mới"]', '["Hướng dương","Hồng","Đồng tiền","Cúc ping pong","Baby"]', 'Vàng tươi - kem - xanh non', 'Bán chạy', 1, 1, 20),
@@ -13,7 +59,7 @@ VALUES
   ('sanh-doi-hong-lam', 'TF-HC-011', 'sanh-doi-hong-lam', 'Sánh Đôi Hồng Lam', 'Hoa cầm tay hòa sắc hồng và lam cho lễ cưới', 'Bó hoa cưới phối hai tông hồng lam trong phom cầm tay cân đối, lên ảnh rõ màu nhưng vẫn mềm mại cho lễ cưới, lễ đính hôn hoặc buổi chụp hình.', 'Hoa cưới', 'Quanh năm, đặt trước 3 ngày để chọn hoa phù hợp', '/products/sanh-doi-hong-lam.webp', '["/products/sanh-doi-hong-lam.webp"]', '["Lễ cưới","Lễ đính hôn","Chụp ảnh cưới"]', '["Hồng","Cẩm tú cầu xanh","Alstroemeria","Sao xanh"]', 'Hồng bụi - lam nhạt - trắng', 'Hoa cưới', 1, 1, 110),
   ('may-lam', 'TF-BQ-012', 'may-lam', 'Mây Lam', 'Bó hoa tông lam mềm mại như một áng mây', 'Sắc lam khói được làm dịu bằng những điểm hoa trắng và lớp gói sáng, tạo món quà nhẹ nhàng cho sinh nhật, lời cảm ơn hoặc người thương.', 'Bó hoa', 'Quanh năm, phối hoa tương đương theo mùa', '/products/may-lam.webp', '["/products/may-lam.webp"]', '["Sinh nhật","Cảm ơn","Tặng người thương"]', '["Phi yến xanh","Phi yến trắng"]', 'Lam khói - trắng - xanh bạc', 'Dịu dàng', 1, 0, 120);
 
-INSERT OR IGNORE INTO product_variants (id, product_id, name, price, compare_at_price, stock, active)
+INSERT INTO product_variants (id, product_id, name, price, compare_at_price, stock, active)
 VALUES
   ('vuon-trong-nang-standard', 'vuon-trong-nang', 'Tiêu chuẩn', 690000, NULL, 14, 1),
   ('nang-goi-niem-vui-standard', 'nang-goi-niem-vui', 'Tiêu chuẩn', 790000, NULL, 12, 1),
@@ -27,28 +73,3 @@ VALUES
   ('sac-mau-le-hoi-standard', 'sac-mau-le-hoi', 'Tiêu chuẩn', 980000, NULL, 8, 1),
   ('sanh-doi-hong-lam-standard', 'sanh-doi-hong-lam', 'Tiêu chuẩn', 1250000, NULL, 4, 1),
   ('may-lam-standard', 'may-lam', 'Tiêu chuẩn', 650000, NULL, 11, 1);
-
-INSERT OR IGNORE INTO shipping_rules (id, name, kind, value, fee, estimate, priority, active)
-VALUES
-  ('local', 'Nội xã Tuy An Bắc', 'locality', 'Xã Tuy An Bắc', 25000, 'Trong ngày', 300, 1),
-  ('daklak', 'Các khu vực khác tại Đắk Lắk', 'province', 'Đắk Lắk', 50000, 'Trong ngày hoặc ngày kế tiếp', 200, 1),
-  ('region', 'Tây Nguyên và Nam Trung Bộ', 'region', 'Tây Nguyên & Nam Trung Bộ', 85000, '1 - 2 ngày', 100, 1),
-  ('nationwide', 'Các tỉnh thành còn lại', 'nationwide', 'Việt Nam', 120000, '2 - 4 ngày', 0, 1);
-
-INSERT OR IGNORE INTO site_settings (key, value)
-VALUES
-  ('shop_name', 'Trâm Florist'),
-  ('tagline', 'Trao một mùa hoa, giữ một đời thương'),
-  ('phone', '0838469089'),
-  ('address', 'Xã Tuy An Bắc, Tỉnh Đắk Lắk'),
-  ('opening_hours', '08:00 - 17:00, Thứ Hai - Chủ Nhật'),
-  ('zalo_url', 'https://zalo.me/0838469089'),
-  ('momo_number', '0838469089'),
-  ('momo_owner', 'NGUYỄN LÂM GIA BẢO'),
-  ('momo_qr_image', '/payment/momo-nguyen-lam-gia-bao.png'),
-  ('cod_enabled', 'true'),
-  ('momo_enabled', 'true');
-
-UPDATE site_settings
-SET value = 'NGUYỄN LÂM GIA BẢO', updated_at = datetime('now')
-WHERE key = 'momo_owner' AND value = 'Chờ chủ shop xác nhận';

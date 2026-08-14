@@ -68,7 +68,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
             return product && product.stock > 0 ? [{ product, quantity: item.quantity }] : [];
           });
           return <article className="account-order-card" key={order.code}>
-            <div className="account-order-image"><Image src={order.items[0]?.image ?? "/products/amour-bleu.png"} alt="" width={116} height={138} /></div>
+            <div className="account-order-image"><Image src={order.items[0]?.image ?? "/products/vuon-trong-nang.webp"} alt="" width={116} height={138} /></div>
             <div className="account-order-copy"><span>{new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium" }).format(new Date(order.createdAt))}</span><h3>{order.code}</h3><p>Giao cho <strong>{order.recipientName}</strong> tại {order.locality}, {order.province}</p><ul>{order.items.map((item) => <li key={`${order.code}-${item.productId}`}>{item.quantity} × {item.name}</li>)}</ul></div>
             <div className="account-order-summary"><strong>{formatVnd(order.total)}</strong><span>{statusLabels[order.status] ?? order.status}</span><div><Link className="button button-outline" href={`/tra-cuu-don?code=${encodeURIComponent(order.code)}`}>Xem chi tiết</Link>{order.status === "delivered" && <ReorderButton lines={reorderLines} />}</div></div>
           </article>;

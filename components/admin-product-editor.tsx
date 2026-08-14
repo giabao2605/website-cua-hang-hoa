@@ -24,7 +24,7 @@ export function AdminProductEditor({
 }) {
   const previewImage = /^\/(?:products|media)\/[a-zA-Z0-9/_-]+\.(?:jpe?g|png|webp)$/i.test(product.image)
     ? product.image
-    : "/products/amour-bleu.png";
+    : "/products/vuon-trong-nang.webp";
   return (
     <div className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-editor-title">
       <form className="admin-editor admin-product-editor" onSubmit={onSubmit}>
