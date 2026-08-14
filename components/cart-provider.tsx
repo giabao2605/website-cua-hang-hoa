@@ -19,6 +19,7 @@ type CartContextValue = {
   subtotal: number;
   ready: boolean;
   addItem: (product: Product, quantity?: number) => void;
+  addItems: (lines: readonly { product: Product; quantity: number }[]) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   removeItem: (productId: string) => void;
   clear: () => void;
@@ -99,6 +100,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     showNotice(`${product.name} đã được thêm vào giỏ.`);
   }, [showNotice]);
 
+  const addItems = useCallback((lines: readonly { product: Product; quantity: number }[]) => {
+    let stored: readonly CartItem[] = [];
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      stored = raw ? JSON.parse(raw) as CartItem[] : [];
+    } catch {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+    const next = lines.reduce<readonly CartItem[]>((current, { product, quantity }) => {
+      const safeQuantity = Math.max(1, Math.min(99, product.stock, quantity));
+      const existing = current.find((item) => item.productId === product.id);
+      return existing
+        ? current.map((item) => item.productId === product.id ? { ...item, quantity: Math.min(99, product.stock, item.quantity + safeQuantity) } : item)
+        : [...current, { productId: product.id, slug: product.slug, name: product.name, sku: product.sku, image: product.image, price: product.price, quantity: safeQuantity }];
+    }, stored);
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    storageReadyRef.current = true;
+    setStorageReady(true);
+    setItems(next);
+    showNotice("Các sản phẩm còn bán đã được thêm vào giỏ.");
+  }, [showNotice]);
+
   const updateQuantity = useCallback((productId: string, quantity: number) => {
     if (quantity <= 0) {
       setItems((current) => current.filter((item) => item.productId !== productId));
@@ -120,11 +143,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     ready: storageReady,
     addItem,
+    addItems,
     updateQuantity,
     removeItem,
     clear,
     notice,
-  }), [items, storageReady, addItem, updateQuantity, removeItem, clear, notice]);
+  }), [items, storageReady, addItem, addItems, updateQuantity, removeItem, clear, notice]);
 
   return (
     <CartContext.Provider value={value}>

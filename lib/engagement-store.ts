@@ -96,3 +96,16 @@ export async function updateContactRequestStatus(id: string, value: unknown) {
   if (Number(result.meta.changes ?? 0) !== 1) throw new Error("Không tìm thấy yêu cầu tư vấn.");
   return { id, status: parsed.data.status };
 }
+
+export async function deleteContactRequest(id: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Mã yêu cầu tư vấn không hợp lệ.");
+  const db = getD1Binding();
+  if (!db) {
+    if (!memoryContacts.some((request) => request.id === id)) throw new Error("Không tìm thấy yêu cầu tư vấn.");
+    memoryContacts = memoryContacts.filter((request) => request.id !== id);
+    return { id };
+  }
+  const result = await db.prepare("DELETE FROM contact_requests WHERE id = ?").bind(id).run();
+  if (Number(result.meta.changes ?? 0) !== 1) throw new Error("Không tìm thấy yêu cầu tư vấn.");
+  return { id };
+}

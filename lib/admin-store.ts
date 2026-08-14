@@ -30,6 +30,7 @@ export type AdminOrder = Readonly<{
   paymentMethod: "COD" | "MOMO";
   paymentStatus: PaymentStatus;
   status: OrderStatus;
+  archived: boolean;
   total: number;
   version: number;
   createdAt: string;
@@ -60,6 +61,10 @@ const orderUpdateSchema = z.object({
   version: z.number().int().min(1),
   note: z.string().trim().max(300).default(""),
 });
+const orderArchiveSchema = z.object({
+  archived: z.boolean(),
+  version: z.number().int().min(1),
+}).strict();
 
 export async function getAdminDashboard(): Promise<AdminDashboard> {
   const db = getD1Binding();
@@ -77,12 +82,12 @@ export async function getAdminDashboard(): Promise<AdminDashboard> {
       db.prepare("SELECT id, name, kind, value, fee, estimate, priority, active FROM shipping_rules ORDER BY priority DESC").all<Row>(),
       db.prepare(`
         SELECT id, public_code, buyer_name, buyer_email, buyer_phone, recipient_name,
-          payment_method, payment_status, status, total, version, created_at
+          payment_method, payment_status, status, archived, total, version, created_at
         FROM orders ORDER BY created_at DESC LIMIT 100
       `).all<Row>(),
       db.prepare(`
         SELECT
-          SUM(CASE WHEN status NOT IN ('delivered', 'cancelled') THEN 1 ELSE 0 END) AS needs_action,
+          SUM(CASE WHEN archived = 0 AND status NOT IN ('delivered', 'cancelled') THEN 1 ELSE 0 END) AS needs_action,
           COALESCE(SUM(CASE WHEN date(created_at, '+7 hours') = date('now', '+7 hours') AND status != 'cancelled' THEN total ELSE 0 END), 0) AS revenue_today
         FROM orders
       `).first<Row>(),
@@ -178,7 +183,7 @@ export async function saveAdminOrder(id: string, value: unknown, actorId: string
   const db = requireD1Binding();
   const current = await db.prepare(`
     SELECT id, public_code, buyer_name, buyer_email, buyer_phone, recipient_name,
-      payment_method, payment_status, status, total, version, created_at
+      payment_method, payment_status, status, archived, total, version, created_at
     FROM orders WHERE id = ? LIMIT 1
   `).bind(id).first<Row>();
   if (!current) throw new Error("Không tìm thấy đơn hàng.");
@@ -204,7 +209,38 @@ export async function saveAdminOrder(id: string, value: unknown, actorId: string
   `).bind(crypto.randomUUID(), id, actorId, String(current.status), input.status, input.note, now).run();
   const row = await db.prepare(`
     SELECT id, public_code, buyer_name, buyer_email, buyer_phone, recipient_name,
-      payment_method, payment_status, status, total, version, created_at
+      payment_method, payment_status, status, archived, total, version, created_at
+    FROM orders WHERE id = ?
+  `).bind(id).first<Row>();
+  if (!row) throw new Error("Không thể đọc lại đơn hàng.");
+  return adminOrderFromRow(row);
+}
+
+export async function saveAdminOrderArchived(id: string, value: unknown, actorId: string): Promise<AdminOrder> {
+  if (!/^[0-9a-f-]{20,64}$/i.test(id)) throw new Error("Mã nội bộ đơn hàng không hợp lệ.");
+  const parsed = orderArchiveSchema.safeParse(value);
+  if (!parsed.success) throw new Error("Dữ liệu lưu trữ đơn hàng không hợp lệ.");
+  const db = requireD1Binding();
+  const current = await db.prepare(`
+    SELECT id, public_code, buyer_name, buyer_email, buyer_phone, recipient_name,
+      payment_method, payment_status, status, archived, total, version, created_at
+    FROM orders WHERE id = ? LIMIT 1
+  `).bind(id).first<Row>();
+  if (!current) throw new Error("Không tìm thấy đơn hàng.");
+  const input = parsed.data;
+  const now = new Date().toISOString();
+  const updated = await db.prepare(`
+    UPDATE orders SET archived = ?, version = version + 1, updated_at = ?
+    WHERE id = ? AND version = ?
+  `).bind(input.archived ? 1 : 0, now, id, input.version).run();
+  if (Number(updated.meta.changes ?? 0) !== 1) throw new Error("Đơn hàng vừa được thay đổi ở nơi khác. Hãy tải lại trang.");
+  await db.prepare(`
+    INSERT INTO order_events (id, order_id, actor_id, event_type, from_status, to_status, note, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(crypto.randomUUID(), id, actorId, input.archived ? "admin_archive" : "admin_restore", String(current.status), String(current.status), input.archived ? "Lưu trữ đơn hàng" : "Khôi phục đơn hàng", now).run();
+  const row = await db.prepare(`
+    SELECT id, public_code, buyer_name, buyer_email, buyer_phone, recipient_name,
+      payment_method, payment_status, status, archived, total, version, created_at
     FROM orders WHERE id = ?
   `).bind(id).first<Row>();
   if (!row) throw new Error("Không thể đọc lại đơn hàng.");
@@ -289,6 +325,7 @@ function adminOrderFromRow(row: Row): AdminOrder {
     paymentMethod: String(row.payment_method) as "COD" | "MOMO",
     paymentStatus: String(row.payment_status) as PaymentStatus,
     status: String(row.status) as OrderStatus,
+    archived: Boolean(row.archived),
     total: Number(row.total),
     version: Number(row.version),
     createdAt: String(row.created_at),

@@ -18,7 +18,7 @@ export type PublicOrder = Readonly<{
   deliveryDate: string;
   deliverySlot: string;
   createdAt: string;
-  items: readonly { name: string; quantity: number; image: string }[];
+  items: readonly { productId: string; name: string; quantity: number; image: string }[];
 }>;
 
 type CreateOrderPayload = CheckoutInput & {
@@ -206,7 +206,7 @@ async function findOrPrepareProfile(db: D1Database, identity: AuthIdentity, full
 }
 
 async function publicOrderFromRow(db: D1Database, order: Record<string, string | number>): Promise<PublicOrder> {
-  const items = await db.prepare("SELECT product_name, quantity, image_url FROM order_items WHERE order_id = ? ORDER BY rowid ASC")
+  const items = await db.prepare("SELECT product_id, product_name, quantity, image_url FROM order_items WHERE order_id = ? ORDER BY rowid ASC")
     .bind(String(order.id))
     .all<Record<string, string | number>>();
   return {
@@ -222,7 +222,7 @@ async function publicOrderFromRow(db: D1Database, order: Record<string, string |
     deliveryDate: String(order.delivery_date),
     deliverySlot: String(order.delivery_slot),
     createdAt: String(order.created_at),
-    items: items.results.map((item) => ({ name: String(item.product_name), quantity: Number(item.quantity), image: String(item.image_url) })),
+    items: items.results.map((item) => ({ productId: String(item.product_id), name: String(item.product_name), quantity: Number(item.quantity), image: String(item.image_url) })),
   };
 }
 

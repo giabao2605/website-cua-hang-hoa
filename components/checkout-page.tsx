@@ -13,10 +13,16 @@ type CheckoutResult = { code: string; paymentMethod: "COD" | "MOMO"; total: numb
 export function CheckoutPage({
   shippingRules,
   customerEmail = "",
+  customerName = "",
+  customerPhone = "",
+  customerAddress = "",
   settings,
 }: {
   shippingRules: readonly ShippingRule[];
   customerEmail?: string;
+  customerName?: string;
+  customerPhone?: string;
+  customerAddress?: string;
   settings: SiteSettings;
 }) {
   const { items, subtotal, ready, clear } = useCart();
@@ -122,9 +128,9 @@ export function CheckoutPage({
         <section className="form-card">
           <div className="form-card-title"><span>1</span><div><h2>Người đặt hoa</h2><p>Thông tin để shop liên hệ xác nhận.</p></div></div>
           <div className="form-grid">
-            <label>Họ và tên<input name="buyerName" required minLength={2} placeholder="Nguyễn Hà Trâm" /></label>
-            <label>Email<input name="buyerEmail" type="email" required defaultValue={customerEmail} readOnly={Boolean(customerEmail)} autoComplete="email" placeholder="tram@example.com" /></label>
-            <label>Số điện thoại<input name="buyerPhone" required inputMode="tel" placeholder="0838 469 089" /></label>
+            <label>Họ và tên<input name="buyerName" required minLength={2} defaultValue={customerName} autoComplete="name" /></label>
+            <label>Email<input name="buyerEmail" type="email" required defaultValue={customerEmail} readOnly={Boolean(customerEmail)} autoComplete="email" /></label>
+            <label>Số điện thoại<input name="buyerPhone" required inputMode="tel" defaultValue={customerPhone} autoComplete="tel" /></label>
           </div>
         </section>
         <section className="form-card">
@@ -134,7 +140,7 @@ export function CheckoutPage({
             <label>Số điện thoại người nhận<input name="recipientPhone" required inputMode="tel" /></label>
             <label>Tỉnh / Thành phố<input list="province-options" value={province} onChange={(event) => setProvince(event.target.value)} autoComplete="address-level1" required /><datalist id="province-options">{provinceOptions.map((item) => <option key={item.province} value={item.province} />)}</datalist></label>
             <label>Xã / Phường<input value={locality} onChange={(event) => setLocality(event.target.value)} required /></label>
-            <label className="field-wide">Địa chỉ chi tiết<input name="addressLine" required minLength={3} placeholder="Số nhà, tên đường, thôn..." /></label>
+            <label className="field-wide">Địa chỉ chi tiết<input name="addressLine" required minLength={3} defaultValue={customerAddress} placeholder="Số nhà, tên đường, thôn..." /></label>
             <label>Ngày giao<input name="deliveryDate" type="date" min={tomorrow} defaultValue={tomorrow} required /></label>
             <label>Khung giờ<select name="deliverySlot" defaultValue="08:00-11:00"><option value="08:00-11:00">08:00 - 11:00</option><option value="11:00-14:00">11:00 - 14:00</option><option value="14:00-17:00">14:00 - 17:00</option></select></label>
             <label className="field-wide">Lời nhắn / ghi chú<textarea name="note" maxLength={500} rows={4} placeholder="Nội dung thiệp, lưu ý khi giao..." /></label>

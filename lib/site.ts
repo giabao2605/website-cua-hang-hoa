@@ -23,6 +23,7 @@ export type SiteSettings = Readonly<{
   momoNumber: string;
   momoOwner: string;
   momoQrImage: string;
+  otpSenderEmail: string;
   codEnabled: boolean;
   momoEnabled: boolean;
 }>;
@@ -38,6 +39,7 @@ export const defaultSiteSettings: SiteSettings = {
   momoNumber: site.momoNumber,
   momoOwner: "NGUYỄN LÂM GIA BẢO",
   momoQrImage: "/payment/momo-nguyen-lam-gia-bao.png",
+  otpSenderEmail: "",
   codEnabled: true,
   momoEnabled: true,
 };

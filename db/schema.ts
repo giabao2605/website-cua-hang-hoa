@@ -16,6 +16,7 @@ export const profiles = sqliteTable(
     email: text("email").notNull(),
     fullName: text("full_name").notNull().default(""),
     phone: text("phone").notNull().default(""),
+    address: text("address").notNull().default(""),
     role: text("role", { enum: ["customer", "admin"] }).notNull().default("customer"),
     disabled: integer("disabled", { mode: "boolean" }).notNull().default(false),
     createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
@@ -116,6 +117,7 @@ export const orders = sqliteTable(
     paymentMethod: text("payment_method", { enum: ["COD", "MOMO"] }).notNull(),
     paymentStatus: text("payment_status", { enum: ["cod_pending", "pending", "payment_review", "paid", "collected", "rejected"] }).notNull(),
     status: text("status", { enum: ["pending_confirmation", "confirmed", "preparing", "delivering", "delivered", "cancelled"] }).notNull(),
+    archived: integer("archived", { mode: "boolean" }).notNull().default(false),
     subtotal: integer("subtotal").notNull(),
     discount: integer("discount").notNull().default(0),
     shippingFee: integer("shipping_fee").notNull(),
@@ -195,6 +197,25 @@ export const siteSettings = sqliteTable("site_settings", {
   value: text("value").notNull(),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const signupOtps = sqliteTable(
+  "signup_otps",
+  {
+    email: text("email").primaryKey(),
+    codeHash: text("code_hash").notNull(),
+    expiresAt: integer("expires_at").notNull(),
+    nextSendAt: integer("next_send_at").notNull(),
+    sendCount: integer("send_count").notNull().default(1),
+    verifyAttempts: integer("verify_attempts").notNull().default(0),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    index("idx_signup_otps_expires_at").on(table.expiresAt),
+    check("signup_otp_send_count_positive", sql`${table.sendCount} >= 1`),
+    check("signup_otp_attempts_nonnegative", sql`${table.verifyAttempts} >= 0`),
+  ],
+);
 
 export const contactRequests = sqliteTable(
   "contact_requests",

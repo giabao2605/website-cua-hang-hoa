@@ -38,17 +38,17 @@ export const metadata: Metadata = {
     title: "Trâm Florist | Hoa tươi theo mùa, giao toàn quốc",
     description: "Hoa tươi theo mùa được kết thủ công tại Tuy An Bắc, giao tận nơi trên toàn quốc.",
     images: [{
-      url: "/brand/tram-florist-og.png",
-      width: 1731,
-      height: 909,
-      alt: "Trâm Florist - Trao một mùa hoa, giữ một đời thương",
+      url: "/brand/tram-florist-og-v2.jpg",
+      width: 1200,
+      height: 630,
+      alt: "Trâm Florist - Hoa theo mùa, kết bằng tay",
     }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Trâm Florist | Hoa tươi theo mùa",
-    description: "Trao một mùa hoa, giữ một đời thương.",
-    images: ["/brand/tram-florist-og.png"],
+    description: "Hoa theo mùa, kết bằng tay.",
+    images: ["/brand/tram-florist-og-v2.jpg"],
   },
 };
 

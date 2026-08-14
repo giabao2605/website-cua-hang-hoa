@@ -18,15 +18,50 @@ test("empty cart invites customers back to three featured designs", async ({ pag
   await expect(page.getByRole("heading", { name: "Chưa có sản phẩm để thanh toán" })).toBeVisible();
 });
 
+test("cart makes quantity and line totals explicit", async ({ page }) => {
+  await page.goto("/hoa");
+  await page.getByRole("button", { name: /Thêm Tình Xanh vào giỏ/ }).click();
+  await page.getByRole("link", { name: /Giỏ hàng/ }).click();
+  const item = page.locator(".cart-item").filter({ hasText: "Tình Xanh" });
+  const decrease = item.getByRole("button", { name: "Giảm số lượng Tình Xanh" });
+  const increase = item.getByRole("button", { name: "Tăng số lượng Tình Xanh" });
+  await increase.click();
+
+  await expect(page.getByRole("heading", { name: "1 mẫu hoa · 2 sản phẩm" })).toBeVisible();
+  await expect(item.locator(".quantity-control > span")).toHaveText("2");
+  await expect(item.getByText(/890\.000\s*[₫đ] × 2/)).toBeVisible();
+  await expect(item.getByText("Thành tiền", { exact: true })).toBeVisible();
+  await expect(item.getByText(/1\.780\.000\s*[₫đ]/)).toBeVisible();
+  await expect(page.getByLabel("Mã ưu đãi")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Áp dụng" })).toHaveCount(0);
+  await expect(item.getByRole("button", { name: "Xóa Tình Xanh khỏi giỏ" })).toBeVisible();
+  await expect(page.getByText("Tổng tạm tính", { exact: true })).toBeVisible();
+  const summaryTotal = page.locator(".summary-total strong");
+  await expect(summaryTotal).toHaveText(/1\.780\.000\s*[₫đ]/);
+  const subtotalFont = await page.locator(".summary-row strong").first().evaluate((element) => getComputedStyle(element).fontFamily);
+  const totalFont = await summaryTotal.evaluate((element) => getComputedStyle(element).fontFamily);
+  expect(totalFont).toBe(subtotalFont);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  for (const control of [decrease, increase]) {
+    const box = await control.boundingBox();
+    expect(box?.width).toBeGreaterThanOrEqual(44);
+    expect(box?.height).toBeGreaterThanOrEqual(44);
+  }
+  await decrease.click();
+  await expect(item.locator(".quantity-control > span")).toHaveText("1");
+  await expect(decrease).toBeDisabled();
+  await expect(page.getByRole("heading", { name: "1 mẫu hoa · 1 sản phẩm" })).toBeVisible();
+});
+
 test("customer can browse, report a MoMo payment, and track a real order", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Để hoa nói hộ/ })).toBeVisible();
   await page.getByRole("link", { name: /Chọn hoa ngay/ }).click();
   await expect(page.getByRole("heading", { name: /Tìm bó hoa dành riêng/ })).toBeVisible();
-  await page.getByRole("button", { name: /Thêm Amour Bleu vào giỏ/ }).click();
+  await page.getByRole("button", { name: /Thêm Tình Xanh vào giỏ/ }).click();
   await expect(page.getByRole("link", { name: /Giỏ hàng, 1 sản phẩm/ })).toBeVisible();
   await page.getByRole("link", { name: /Giỏ hàng/ }).click();
-  await expect(page.getByRole("heading", { name: /1 thiết kế đã chọn/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "1 mẫu hoa · 1 sản phẩm" })).toBeVisible();
   await page.getByRole("link", { name: /Tiến hành đặt hoa/ }).click();
   await expect(page.getByRole("heading", { name: /Thông tin đặt và nhận hoa/ })).toBeVisible();
   await expect(page.getByText("25.000", { exact: false })).toBeVisible();
@@ -96,6 +131,24 @@ test("admin route is server protected", async ({ page }) => {
     data: { shopName: "Không hợp lệ" },
   });
   expect(settingsResponse.status()).toBe(401);
+  const deleteContactResponse = await page.request.delete("/api/admin/contacts/00000000-0000-4000-8000-000000000000");
+  expect(deleteContactResponse.status()).toBe(401);
+  const profileResponse = await page.request.patch("/api/account/profile", {
+    data: { fullName: "Nguyễn Hà Trâm", phone: "0838469089", address: "Đắk Lắk" },
+  });
+  expect(profileResponse.status()).toBe(401);
+  const accountResponse = await page.request.patch("/api/admin/accounts/00000000-0000-4000-8000-000000000000", {
+    data: { disabled: true },
+  });
+  expect(accountResponse.status()).toBe(401);
+  const deleteAccountResponse = await page.request.delete("/api/admin/accounts/00000000-0000-4000-8000-000000000000", {
+    data: { confirmEmail: "member@example.com" },
+  });
+  expect(deleteAccountResponse.status()).toBe(401);
+  const archiveOrderResponse = await page.request.patch("/api/admin/orders/00000000-0000-4000-8000-000000000000/archive", {
+    data: { archived: true, version: 1 },
+  });
+  expect(archiveOrderResponse.status()).toBe(401);
 });
 
 test("journal links open the real index and matching article", async ({ page }) => {

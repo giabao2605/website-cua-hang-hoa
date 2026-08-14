@@ -11,11 +11,13 @@ const settingKeys = {
   zaloUrl: "zalo_url",
   momoNumber: "momo_number",
   momoOwner: "momo_owner",
+  momoQrImage: "momo_qr_image",
+  otpSenderEmail: "otp_sender_email",
   codEnabled: "cod_enabled",
   momoEnabled: "momo_enabled",
 } as const;
 
-type EditableSiteSettings = Omit<SiteSettings, "phoneDisplay" | "momoQrImage">;
+type EditableSiteSettings = Omit<SiteSettings, "phoneDisplay">;
 type SettingsRow = Readonly<{ key: string; value: string }>;
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -41,7 +43,7 @@ export async function saveSiteSettings(value: unknown): Promise<SiteSettings> {
     INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, ?)
     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
   `).bind(key, String(input[property]), now)));
-  return { ...input, momoQrImage: defaultSiteSettings.momoQrImage, phoneDisplay: formatPhone(input.phone) };
+  return { ...input, phoneDisplay: formatPhone(input.phone) };
 }
 
 function parseBoolean(value: string | undefined, fallback: boolean) {
@@ -52,7 +54,8 @@ async function readSiteSettings(db: D1Database, strict: boolean): Promise<SiteSe
   const result = await db.prepare("SELECT key, value FROM site_settings").all<SettingsRow>();
   const values = Object.fromEntries(result.results.map((row) => [row.key, row.value]));
   if (strict) {
-    const missing = Object.values(settingKeys).filter((key) => values[key] === undefined);
+    const optionalKeys = new Set<string>([settingKeys.momoQrImage, settingKeys.otpSenderEmail]);
+    const missing = Object.values(settingKeys).filter((key) => !optionalKeys.has(key) && values[key] === undefined);
     if (missing.length) throw new Error("Cấu hình vận hành tạm thời không sẵn sàng.");
   }
   const input = {
@@ -64,12 +67,13 @@ async function readSiteSettings(db: D1Database, strict: boolean): Promise<SiteSe
     zaloUrl: values.zalo_url ?? defaultSiteSettings.zaloUrl,
     momoNumber: values.momo_number ?? defaultSiteSettings.momoNumber,
     momoOwner: values.momo_owner ?? defaultSiteSettings.momoOwner,
-    momoQrImage: defaultSiteSettings.momoQrImage,
+    momoQrImage: values.momo_qr_image ?? defaultSiteSettings.momoQrImage,
+    otpSenderEmail: values.otp_sender_email ?? defaultSiteSettings.otpSenderEmail,
     codEnabled: parseBoolean(values.cod_enabled, defaultSiteSettings.codEnabled),
     momoEnabled: parseBoolean(values.momo_enabled, defaultSiteSettings.momoEnabled),
   };
   const parsed = strict ? parseSiteSettingsInput(input) : input;
-  return { ...parsed, momoQrImage: defaultSiteSettings.momoQrImage, phoneDisplay: formatPhone(parsed.phone) };
+  return { ...parsed, phoneDisplay: formatPhone(parsed.phone) };
 }
 
 function formatPhone(phone: string) {

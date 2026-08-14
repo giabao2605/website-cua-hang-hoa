@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   countActiveNewsletterSubscribers,
   createContactRequest,
+  deleteContactRequest,
   listContactRequests,
   subscribeNewsletter,
   updateContactRequestStatus,
@@ -25,6 +26,9 @@ test("contact requests and explicit newsletter consent persist without a platfor
 
   await updateContactRequestStatus(created.id, { status: "contacted" });
   assert.equal((await listContactRequests()).find((item) => item.id === created.id)?.status, "contacted");
+
+  await deleteContactRequest(created.id);
+  assert.equal((await listContactRequests()).find((item) => item.id === created.id), undefined);
 
   const before = await countActiveNewsletterSubscribers();
   await subscribeNewsletter({ email: "SEASON@example.com", consent: true, website: "" });

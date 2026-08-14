@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render(path = "/") {
@@ -19,9 +20,38 @@ test("server-renders Trâm Florist storefront", async () => {
   assert.match(html, /Trâm Florist/);
   assert.match(html, /Để hoa nói hộ/);
   assert.match(html, /Hoa tươi theo mùa/);
-  assert.match(html, /Amour Bleu/);
+  assert.match(html, /Tình Xanh/);
   assert.match(html, /0838 469 089/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
+});
+
+test("homepage renders the seasonal editorial and three-step delivery ritual", async () => {
+  const response = await render();
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  const editorial = html.match(/<section[^>]*class="[^"]*\bseasonal-editorial\b[^"]*"[^>]*>[\s\S]*?<\/section>/);
+  assert.ok(editorial, "expected a seasonal editorial region");
+  assert.match(editorial[0], /class="[^"]*\bseasonal-marquee\b/);
+  const marqueeGroups = [...editorial[0].matchAll(/<div(?=[^>]*class="[^"]*\bseasonal-marquee-group\b[^"]*")[^>]*>/g)];
+  assert.equal(marqueeGroups.length, 2, "expected two equal marquee groups");
+  assert.match(marqueeGroups[1][0], /aria-hidden="true"/);
+
+  const delivery = html.match(/<section[^>]*class="[^"]*\bdelivery-ritual\b[^"]*"[^>]*>[\s\S]*?<\/section>/);
+  assert.ok(delivery, "expected a delivery ritual region");
+  assert.equal(delivery[0].match(/<article\b/g)?.length, 3);
+  assert.match(delivery[0], /href="\/chinh-sach-giao-hang"/);
+});
+
+test("motion styles preserve the reduced-motion fallback", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.seasonal-marquee-group\s*\{[^}]*min-width:\s*100vw\s*;/);
+  assert.match(css, /@keyframes\s+seasonalMarquee\s*\{[\s\S]*?translateX\(-50%\)[\s\S]*?\}/);
+
+  const reducedMotion = [...css.matchAll(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\n\}/g)]
+    .find((block) => block[1].includes(".seasonal-marquee-track"))?.[1];
+  assert.ok(reducedMotion, "expected a storefront reduced-motion block");
+  assert.match(reducedMotion, /\.seasonal-marquee-track[\s\S]*?\{[^}]*animation:\s*none\s*!important/);
+  assert.match(reducedMotion, /opacity:\s*1\s*!important/);
 });
 
 test("server-renders catalog and protected admin boundary", async () => {
@@ -31,7 +61,9 @@ test("server-renders catalog and protected admin boundary", async () => {
 
   const admin = await render("/admin");
   assert.equal(admin.status, 200);
-  assert.match(await admin.text(), /Bạn cần đăng nhập|Tài khoản chưa có quyền quản trị/);
+  const adminHtml = await admin.text();
+  assert.match(adminHtml, /Bạn cần đăng nhập|Tài khoản chưa có quyền quản trị/);
+  assert.match(adminHtml, /class="section admin-access-page"/);
 });
 
 test("serves crawler directives and the product sitemap", async () => {
@@ -44,6 +76,7 @@ test("serves crawler directives and the product sitemap", async () => {
   const xml = await sitemap.text();
   assert.match(xml, /<urlset/);
   assert.match(xml, /\/hoa\/amour-bleu/);
+  assert.match(xml, /\/hoa\/ngay-chung-doi/);
   assert.match(xml, /\/nhat-ky\/giu-cam-tu-cau-tuoi-lau-ngay-he/);
 });
 

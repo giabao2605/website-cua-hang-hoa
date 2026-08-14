@@ -15,7 +15,7 @@ test("admin product validation preserves valid integer VND and stock", () => {
     id: "amour-bleu",
     sku: "TF-BQ-001",
     slug: "amour-bleu",
-    name: "Amour Bleu",
+    name: "Tình Xanh",
     subtitle: "Cẩm tú cầu xanh",
     description: "Một thiết kế hoa xanh thanh lịch và được kết thủ công.",
     category: "Bó hoa",
@@ -126,6 +126,8 @@ test("operational settings normalize phones and require a real payment method", 
     zaloUrl: "https://zalo.me/0838469089",
     momoNumber: "+84 838 469 089",
     momoOwner: "Nguyễn Lâm Gia Bảo",
+    momoQrImage: "/media/products/2026/08/momo-qr.png",
+    otpSenderEmail: " SHOP@EXAMPLE.COM ",
     codEnabled: true,
     momoEnabled: true,
   };
@@ -133,10 +135,15 @@ test("operational settings normalize phones and require a real payment method", 
   const parsed = parseSiteSettingsInput(source);
   assert.equal(parsed.phone, "0838469089");
   assert.equal(parsed.momoNumber, "0838469089");
+  assert.equal(parsed.momoQrImage, "/media/products/2026/08/momo-qr.png");
+  assert.equal(parsed.otpSenderEmail, "shop@example.com");
   assert.equal(source.phone, "0838 469 089");
+  assert.equal(parseSiteSettingsInput({ ...source, momoQrImage: "/payment/momo-qr.png" }).momoQrImage, "/payment/momo-qr.png");
   assert.throws(() => parseSiteSettingsInput({ ...source, codEnabled: false, momoEnabled: false }), /thanh toán/i);
   assert.throws(() => parseSiteSettingsInput({ ...source, momoOwner: "Chờ chủ shop xác nhận", momoEnabled: true }), /MoMo/i);
   assert.throws(() => parseSiteSettingsInput({ ...source, zaloUrl: "javascript:alert(1)" }), /vận hành/i);
+  assert.throws(() => parseSiteSettingsInput({ ...source, momoQrImage: "https://example.com/momo-qr.png" }), /vận hành/i);
+  assert.throws(() => parseSiteSettingsInput({ ...source, otpSenderEmail: "not-an-email" }), /vận hành/i);
 });
 
 test("image sniffing accepts real JPEG, PNG and WebP signatures only", () => {

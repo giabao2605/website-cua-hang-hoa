@@ -23,7 +23,7 @@ export const journalArticles: readonly JournalArticle[] = [
     title: "5 cách giữ cẩm tú cầu tươi lâu trong ngày hè",
     excerpt: "Cẩm tú cầu uống rất nhiều nước và dễ mất sức khi trời nóng. Năm bước đơn giản dưới đây giúp từng khối hoa giữ được độ căng, màu trong và dáng tự nhiên lâu hơn.",
     image: "/products/morning-mist.png",
-    imageAlt: "Cẩm tú cầu xanh và cát tường trắng trong bó Morning Mist",
+    imageAlt: "Cẩm tú cầu xanh và cát tường trắng trong bó Sương Mai",
     readTime: "5 phút đọc",
     publishedAt: "2026-08-13",
     sections: [
@@ -68,7 +68,7 @@ export const journalArticles: readonly JournalArticle[] = [
     title: "Chọn bảng màu hoa phù hợp với từng lời nhắn",
     excerpt: "Màu hoa tạo cảm xúc trước cả khi tấm thiệp được mở. Từ dịu dàng, ấm áp đến rực rỡ, mỗi bảng màu có thể giúp lời nhắn của bạn trở nên rõ ràng và tinh tế hơn.",
     image: "/products/garden-whisper.png",
-    imageAlt: "Bó hồng garden màu hồng và tím Garden Whisper",
+    imageAlt: "Bó hồng garden màu hồng và tím Lời Thì Thầm Của Vườn",
     readTime: "6 phút đọc",
     publishedAt: "2026-08-10",
     sections: [

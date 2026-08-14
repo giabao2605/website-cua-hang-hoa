@@ -2,7 +2,7 @@ import { z } from "zod";
 import { normalizeVietnamPhone } from "./commerce.ts";
 
 const productCategory = z.enum(["Bó hoa", "Giỏ hoa", "Hoa cưới", "Hoa sự kiện"]);
-const localImagePath = z.string().trim().regex(/^\/(?:products|media)\/[a-zA-Z0-9/_-]+\.(?:jpe?g|png|webp)$/i);
+const localImagePath = z.string().trim().regex(/^\/(?:products|media|payment)\/[a-zA-Z0-9/_-]+\.(?:jpe?g|png|webp)$/i);
 
 const productInputSchema = z.object({
   id: z.string().trim().regex(/^[a-z0-9][a-z0-9-]{0,63}$/),
@@ -49,6 +49,8 @@ const siteSettingsSchema = z.object({
   zaloUrl: z.string().trim().url().refine((value) => new URL(value).protocol === "https:"),
   momoNumber: z.string().transform(normalizeVietnamPhone),
   momoOwner: z.string().trim().min(2).max(100),
+  momoQrImage: localImagePath,
+  otpSenderEmail: z.union([z.literal(""), z.string().trim().toLowerCase().email().max(254)]).default(""),
   codEnabled: z.boolean(),
   momoEnabled: z.boolean(),
 }).superRefine((value, context) => {

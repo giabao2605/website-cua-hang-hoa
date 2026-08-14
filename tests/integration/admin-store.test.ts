@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createShippingRule } from "../../lib/admin-store.ts";
+import { createShippingRule, saveAdminOrderArchived } from "../../lib/admin-store.ts";
 import { getSiteSettings, saveSiteSettings } from "../../lib/site-settings-store.ts";
 
 test("admin shipping creation binds validated route data into D1", async () => {
@@ -56,6 +56,8 @@ test("operational settings persist as D1 key-value rows and read back", async ()
     zaloUrl: "https://zalo.me/0838469089",
     momoNumber: "0838 469 089",
     momoOwner: "Nguyễn Lâm Gia Bảo",
+    momoQrImage: "/media/products/2026/08/momo-qr.png",
+    otpSenderEmail: "shop@example.com",
     codEnabled: true,
     momoEnabled: false,
   });
@@ -64,7 +66,40 @@ test("operational settings persist as D1 key-value rows and read back", async ()
   assert.equal(saved.phone, "0838469089");
   assert.equal(stored.get("cod_enabled"), "true");
   assert.equal(stored.get("momo_enabled"), "false");
+  assert.equal(stored.get("momo_qr_image"), "/media/products/2026/08/momo-qr.png");
+  assert.equal(stored.get("otp_sender_email"), "shop@example.com");
   assert.deepEqual(loaded, saved);
+  clearDatabase();
+});
+
+test("admin archives any order with optimistic locking and an audit event", async () => {
+  const orderId = "00000000-0000-4000-8000-000000000001";
+  const statements: Array<{ sql: string; values: readonly unknown[] }> = [];
+  installDatabase({
+    prepare(sql: string) {
+      let values: readonly unknown[] = [];
+      return {
+        bind(...next: readonly unknown[]) { values = next; return this; },
+        async first() {
+          statements.push({ sql, values });
+          return { id: "order-1", public_code: "TF1", buyer_name: "Lan", buyer_email: "lan@example.com", buyer_phone: "0912345678", recipient_name: "Lan", payment_method: "COD", payment_status: "cod_pending", status: "pending_confirmation", total: 500_000, version: /WHERE id = \?$/.test(sql.trim()) ? 2 : 1, archived: /WHERE id = \?$/.test(sql.trim()) ? 1 : 0, created_at: "2026-08-13T02:00:00.000Z" };
+        },
+        async run() {
+          statements.push({ sql, values });
+          return { meta: { changes: 1 } };
+        },
+      };
+    },
+  });
+
+  const archived = await saveAdminOrderArchived(orderId, { archived: true, version: 1 }, "admin-1");
+
+  assert.equal(archived.archived, true);
+  assert.match(statements[1]?.sql ?? "", /SET archived = \?, version = version \+ 1/);
+  assert.equal(statements[1]?.values[0], 1);
+  assert.deepEqual(statements[1]?.values.slice(2), [orderId, 1]);
+  assert.equal(statements[2]?.values.includes("admin_archive"), true);
+  assert.equal(statements[2]?.values.includes("admin-1"), true);
   clearDatabase();
 });
 
