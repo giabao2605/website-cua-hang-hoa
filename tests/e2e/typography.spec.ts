@@ -19,7 +19,13 @@ const routes = [
 test("all pages use the shared Vietnamese typography system", async ({ page }) => {
   for (const route of routes) {
     await page.goto(route);
-    await page.evaluate(() => document.fonts.ready);
+    await expect.poll(
+      () => page.evaluate(async () => {
+        await document.fonts.ready;
+        return document.fonts.status;
+      }),
+      { message: `${route} phải tải xong font`, timeout: 10_000 },
+    ).toBe("loaded");
 
     const audit = await page.evaluate(() => {
       const undersized = [...document.querySelectorAll<HTMLElement>("body *")].flatMap((element) => {
