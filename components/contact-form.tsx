@@ -40,8 +40,9 @@ export function ContactForm() {
   }
 
   return (
-    <form className="contact-form" onSubmit={submit}>
+    <form className="contact-form" id="tu-van" onSubmit={submit}>
       <h2>Gửi yêu cầu tư vấn</h2>
+      <p className="contact-form-intro">Không cần viết thật dài. Một vài chi tiết đúng sẽ giúp Trâm tư vấn sát ý hơn.</p>
       <label>Họ và tên<input name="name" required minLength={2} maxLength={80} autoComplete="name" /></label>
       <label>Số điện thoại<input name="phone" required inputMode="tel" autoComplete="tel" /></label>
       <label>Email, không bắt buộc<input name="email" type="email" maxLength={254} autoComplete="email" /></label>

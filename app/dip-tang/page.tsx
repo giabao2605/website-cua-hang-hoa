@@ -28,13 +28,13 @@ export default async function OccasionPage({ searchParams }: { searchParams: Pro
       <section className="occasion-page-hero">
         <div className="container occasion-hero-layout">
           <div className="occasion-hero-copy"><span className="eyebrow">Chọn theo dịp tặng</span><p className="occasion-hero-number">Một lời nhắn được kết bằng hoa</p><h1>Chọn một khoảnh khắc,<br />Trâm chọn lời hoa.</h1><p>Mỗi dịp có một ngôn ngữ riêng. Hãy bắt đầu bằng điều bạn muốn nói, Trâm sẽ gợi ý những thiết kế phù hợp nhất.</p><Link className="button button-primary" href="#chon-dip">Bắt đầu chọn dịp</Link></div>
-          <div className="occasion-hero-collage" aria-label="Gợi ý hoa cho những khoảnh khắc đáng nhớ"><figure className="occasion-hero-main"><Image src="/products/hen-nhau-mua-hong.webp" alt="Bó hoa tông hồng cho ngày kỷ niệm" fill priority sizes="(max-width: 760px) 72vw, 34vw" /></figure><figure className="occasion-hero-secondary"><Image src="/products/nang-goi-niem-vui.webp" alt="Bó hoa tông vàng cho ngày sinh nhật" fill sizes="(max-width: 760px) 42vw, 18vw" /></figure><span>Trao đúng cảm xúc<br />vào đúng ngày</span></div>
+          <div className="occasion-hero-collage" aria-label="Gợi ý hoa cho những khoảnh khắc đáng nhớ"><figure className="occasion-hero-main"><Image src="/editorial/mua-hong-ruc-ro.webp" alt="Bó hoa hồng rực rỡ cho ngày kỷ niệm" fill priority sizes="(max-width: 760px) 72vw, 34vw" /></figure><figure className="occasion-hero-secondary"><Image src="/editorial/bo-hoa-tren-ban-ket.webp" alt="Bó hoa nhiều sắc cho ngày sinh nhật" fill sizes="(max-width: 760px) 42vw, 18vw" /></figure><span>Trao đúng cảm xúc<br />vào đúng ngày</span></div>
         </div>
       </section>
 
       <section className="section occasion-picker" id="chon-dip" aria-labelledby="occasion-picker-title">
         <div className="container">
-          <header className="occasion-picker-heading"><span className="eyebrow">Bắt đầu từ điều muốn nói</span><h2 id="occasion-picker-title">Bạn đang chọn hoa cho dịp nào</h2><p>Chọn một nhóm cảm xúc rồi đi đến dịp cụ thể. Mỗi lựa chọn đều là một đường dẫn riêng để bạn có thể lưu lại hoặc gửi cho người cùng chọn.</p></header>
+          <header className="occasion-picker-heading"><span className="eyebrow">Bắt đầu từ điều muốn nói</span><h2 id="occasion-picker-title">Bạn đang chọn hoa<br />cho dịp nào?</h2><p>Chọn một nhóm cảm xúc rồi đi đến dịp cụ thể. Mỗi lựa chọn đều là một đường dẫn riêng để bạn có thể lưu lại hoặc gửi cho người cùng chọn.</p></header>
           <div className="occasion-group-grid">
             {occasionGroups.map((group, index) => {
               const groupOccasions = group.occasions.filter((occasion) => availableOccasions.has(occasion));

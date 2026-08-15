@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "@/components/safe-link";
 import { Menu, Search, UserRound, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "../lib/site";
 import { CartLink } from "./cart-link";
 
@@ -19,6 +19,41 @@ const nav = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchShellRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    searchInputRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSearchOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const focusable = Array.from(searchShellRef.current?.querySelectorAll<HTMLElement>('a[href], input:not([disabled]), button:not([disabled])') ?? [])
+        .filter((element) => element.getClientRects().length > 0);
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      previouslyFocused?.focus();
+    };
+  }, [searchOpen]);
 
   return (
     <>
@@ -49,12 +84,21 @@ export function SiteHeader() {
       </header>
       {searchOpen && (
         <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Tìm kiếm hoa">
-          <button className="overlay-close" onClick={() => setSearchOpen(false)} aria-label="Đóng tìm kiếm"><X /></button>
-          <form action="/hoa" className="search-dialog">
-            <span className="eyebrow">Bạn đang tìm điều gì?</span>
-            <label htmlFor="site-search">Tìm bó hoa cho khoảnh khắc của bạn</label>
-            <div><Search /><input id="site-search" name="q" placeholder="Thử “sinh nhật”, “cẩm tú cầu”..." /><button type="submit">Tìm kiếm</button></div>
-          </form>
+          <div ref={searchShellRef} className="search-shell">
+            <aside className="search-aside">
+              <span>Trâm Florist · Tuy An Bắc</span>
+              <strong>Bắt đầu từ một người, một dịp hoặc một màu hoa.</strong>
+              <p>Gõ điều bạn đang nghĩ đến. Kết quả sẽ đưa bạn thẳng đến những thiết kế phù hợp trong bộ sưu tập hiện có.</p>
+              <nav aria-label="Gợi ý tìm nhanh"><Link href="/dip-tang?occasion=Sinh%20nh%E1%BA%ADt#goi-y" onClick={() => setSearchOpen(false)}>Hoa sinh nhật</Link><Link href="/dip-tang?occasion=K%E1%BB%B7%20ni%E1%BB%87m#goi-y" onClick={() => setSearchOpen(false)}>Hoa kỷ niệm</Link><Link href="/hoa" onClick={() => setSearchOpen(false)}>Tất cả thiết kế</Link></nav>
+            </aside>
+            <form action="/hoa" className="search-dialog">
+              <span className="search-kicker">Tìm trong 12 thiết kế</span>
+              <label htmlFor="site-search">Tìm bó hoa cho khoảnh khắc của bạn</label>
+              <div className="search-field"><Search aria-hidden="true" /><input ref={searchInputRef} id="site-search" name="q" autoComplete="off" placeholder="Thử “sinh nhật”, “cẩm tú cầu”..." /><button type="submit">Tìm kiếm</button></div>
+              <small>Nhấn Enter để xem kết quả</small>
+            </form>
+            <button className="overlay-close" type="button" onClick={() => setSearchOpen(false)} aria-label="Đóng tìm kiếm"><X /></button>
+          </div>
         </div>
       )}
     </>

@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "@/components/safe-link";
 import { AccountProfileCard } from "../../components/account-profile-card";
 import { AuthPanel } from "../../components/auth-panel";
-import { ProductCard } from "../../components/product-card";
 import { ReorderButton } from "../../components/reorder-button";
 import { hasAdminAccess } from "../../lib/admin-access";
 import { getCatalogProducts } from "../../lib/catalog-store";
@@ -43,13 +42,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
     verified ? listOrdersForCustomer(identity) : Promise.resolve([]),
   ]);
   const productById = new Map(products.map((product) => [product.id, product]));
-  const recommendations = products.filter((product) => product.featured).slice(0, 3);
 
   return <section className="section account-page">
     <div className="container account-dashboard">
       <header className="account-hero">
         <div><span className="eyebrow">Tài khoản của bạn</span><h1>Xin chào, {profile.fullName}</h1><p>{verified ? `Email đã xác nhận: ${email}` : "Email chưa được xác nhận."}</p></div>
-        <form action="/api/auth/signout" method="post"><button className="button button-outline">Đăng xuất</button></form>
+        <form action="/api/auth/signout" method="post"><button className="button button-danger">Đăng xuất</button></form>
       </header>
 
       <div className="account-main-grid">
@@ -74,8 +72,6 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
           </article>;
         })}</div> : <div className="account-orders-empty"><strong>Bạn chưa có đơn hàng trong tài khoản</strong><p>Đơn đặt bằng đúng email đã xác nhận sẽ tự xuất hiện tại đây. Nếu đã dùng email khác, bạn vẫn có thể tra cứu bằng mã đơn và số điện thoại người nhận.</p><div><Link className="button button-primary" href="/hoa">Chọn hoa ngay</Link><Link className="button button-outline" href="/tra-cuu-don">Tra cứu đơn đã đặt</Link></div></div>}
       </section>
-
-      {recommendations.length > 0 && <section className="account-recommendations"><div className="section-heading"><span className="eyebrow">Gợi ý theo mùa</span><h2>Thiết kế dành cho bạn</h2></div><div className="product-grid">{recommendations.map((product) => <ProductCard key={product.id} product={product} />)}</div></section>}
     </div>
   </section>;
 }
